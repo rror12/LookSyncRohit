@@ -1,0 +1,487 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user's profile, including personal preferences for look generation and historical data.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address, used for communication and identification.",
+          "format": "email"
+        },
+        "skinTone": {
+          "type": "string",
+          "description": "The user's preferred skin tone, influencing AI-generated look suggestions (e.g., Fair, Wheatish, Medium, Dusky, Deep)."
+        },
+        "bodyType": {
+          "type": "string",
+          "description": "The user's body type preference, influencing AI-generated look suggestions (e.g., Apple, Pear, Hourglass, Rectangle, Petite)."
+        },
+        "stylePreference": {
+          "type": "string",
+          "description": "The user's preferred fashion style (e.g., Traditional, Indo-Western, Western, Minimalist, Maximalist)."
+        },
+        "budgetRangeMin": {
+          "type": "number",
+          "description": "The minimum budget specified by the user for look generation."
+        },
+        "budgetRangeMax": {
+          "type": "number",
+          "description": "The maximum budget specified by the user for look generation."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating the last time the user profile was updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "skinTone",
+        "bodyType",
+        "stylePreference",
+        "budgetRangeMin",
+        "budgetRangeMax",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Brand": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Brand",
+      "type": "object",
+      "description": "Represents a brand or seller that lists products on the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Brand entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The official name of the brand or seller."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the brand."
+        },
+        "logoUrl": {
+          "type": "string",
+          "description": "URL to the brand's logo image, hosted on Cloudinary.",
+          "format": "uri"
+        },
+        "websiteUrl": {
+          "type": "string",
+          "description": "The official website URL for the brand.",
+          "format": "uri"
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "The primary contact email for the brand.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the brand was added to the platform.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating the last time the brand's information was updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a single product available on the platform, part of looks or listed by brands.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Product entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the product."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the product (e.g., Outfit, Footwear, Jewellery, Bag, Makeup, NailPolish)."
+        },
+        "brandId": {
+          "type": "string",
+          "description": "Reference to the Brand entity that sells this product. (Relationship: Brand 1:N Product)"
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the product in INR."
+        },
+        "colorHex": {
+          "type": "string",
+          "description": "The hexadecimal color code of the product."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to the product's image, hosted on Cloudinary.",
+          "format": "uri"
+        },
+        "buyLink": {
+          "type": "string",
+          "description": "An affiliate link to purchase the product from the brand's website or partner retailer.",
+          "format": "uri"
+        },
+        "occasionTags": {
+          "type": "array",
+          "description": "A list of occasions for which this product is suitable (e.g., Shaadi, Mehndi, Casual).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inStock": {
+          "type": "boolean",
+          "description": "Boolean indicating if the product is currently in stock."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the product was added to the platform.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating the last time the product information was updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "brandId",
+        "price",
+        "colorHex",
+        "imageUrl",
+        "buyLink",
+        "inStock",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Look": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Look",
+      "type": "object",
+      "description": "Represents a complete curated or AI-generated outfit look, including associated products and stylistic details.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Look entity."
+        },
+        "occasion": {
+          "type": "string",
+          "description": "The specific occasion for which this look was curated (e.g., Bridal, Mehndi, Sangeet, Reception, Eid, Diwali, Office, Casual, Date Night, Festive)."
+        },
+        "totalPrice": {
+          "type": "number",
+          "description": "The aggregated price of all individual products in the look."
+        },
+        "outfitDescription": {
+          "type": "string",
+          "description": "A textual description of the main outfit component as generated by AI."
+        },
+        "footwearType": {
+          "type": "string",
+          "description": "The type of footwear suggested for this look (e.g., heels, flats, juttis)."
+        },
+        "jewelleryStyle": {
+          "type": "string",
+          "description": "The style of jewellery suggested for this look (e.g., traditional, minimalist)."
+        },
+        "bagType": {
+          "type": "string",
+          "description": "The type of bag or clutch suggested for this look."
+        },
+        "makeupPaletteHexes": {
+          "type": "array",
+          "description": "An array of hexadecimal color codes for suggested makeup (e.g., lipstick, eyeshadow, blush).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nailColorHex": {
+          "type": "string",
+          "description": "The hexadecimal color code for the suggested nail polish."
+        },
+        "productIds": {
+          "type": "array",
+          "description": "An array of IDs referencing the specific products that make up this look. (Relationship: Look N:N Product)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdByAi": {
+          "type": "boolean",
+          "description": "Boolean indicating if the look was generated by the AI or manually curated."
+        },
+        "likesCount": {
+          "type": "number",
+          "description": "The number of times this look has been liked by users."
+        },
+        "shareCount": {
+          "type": "number",
+          "description": "The number of times this look has been shared by users."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the look was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating the last time the look was updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "occasion",
+        "totalPrice",
+        "outfitDescription",
+        "footwearType",
+        "jewelleryStyle",
+        "bagType",
+        "makeupPaletteHexes",
+        "nailColorHex",
+        "productIds",
+        "createdByAi",
+        "likesCount",
+        "shareCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SavedLook": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SavedLook",
+      "type": "object",
+      "description": "Represents a user's action of saving a particular look, facilitating personal galleries.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SavedLook entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile entity who saved the look. (Relationship: UserProfile 1:N SavedLook)"
+        },
+        "lookId": {
+          "type": "string",
+          "description": "Reference to the Look entity that was saved. (Relationship: Look 1:N SavedLook)"
+        },
+        "savedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user saved the look.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "lookId",
+        "savedAt"
+      ]
+    },
+    "WardrobeItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "WardrobeItem",
+      "type": "object",
+      "description": "Represents a physical item that a user owns and has uploaded to their virtual wardrobe.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the WardrobeItem entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the UserProfile entity who owns this wardrobe item. (Relationship: UserProfile 1:N WardrobeItem)"
+        },
+        "itemName": {
+          "type": "string",
+          "description": "An optional, user-provided name for the wardrobe item."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the wardrobe item (e.g., Outfit, Footwear, Bag, Jewellery)."
+        },
+        "colorHex": {
+          "type": "string",
+          "description": "The hexadecimal color code of the wardrobe item, extracted by AI or provided by user."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to the image of the user's wardrobe item, hosted on Cloudinary.",
+          "format": "uri"
+        },
+        "uploadedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the item was uploaded by the user.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "category",
+        "colorHex",
+        "imageUrl",
+        "uploadedAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores individual user profiles. Access is restricted to the owner (`userId` must match `request.auth.uid`). The document ID matches the `userId`."
+        }
+      },
+      {
+        "path": "/brands/{brandId}",
+        "definition": {
+          "entityName": "Brand",
+          "schema": {
+            "$ref": "#/backend/entities/Brand"
+          },
+          "description": "Stores information about brands/sellers. Publicly readable. Write access requires `request.auth.uid` to match the `ownerId` field within the document, or be a platform admin. Includes `ownerId` for authorization independence."
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores details of individual products available on the platform. Publicly readable. Write access requires `request.auth.uid` to match the `brandOwnerId` field within the document (denormalized from the associated Brand's `ownerId`) or be a platform admin. Includes denormalized 'brandOwnerId' for authorization independence.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier of the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/looks/{lookId}",
+        "definition": {
+          "entityName": "Look",
+          "schema": {
+            "$ref": "#/backend/entities/Look"
+          },
+          "description": "Stores complete curated or AI-generated outfit looks. Publicly readable. Write access is restricted to platform administrators.",
+          "params": [
+            {
+              "name": "lookId",
+              "description": "The unique identifier of the look."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/savedLooks/{savedLookId}",
+        "definition": {
+          "entityName": "SavedLook",
+          "schema": {
+            "$ref": "#/backend/entities/SavedLook"
+          },
+          "description": "Stores looks saved by a specific user. Access is restricted to the owner (`userId` must match `request.auth.uid`). The `userId` in the path ensures authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who saved the look."
+            },
+            {
+              "name": "savedLookId",
+              "description": "The unique identifier for the saved look entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/wardrobeItems/{wardrobeItemId}",
+        "definition": {
+          "entityName": "WardrobeItem",
+          "schema": {
+            "$ref": "#/backend/entities/WardrobeItem"
+          },
+          "description": "Stores physical wardrobe items uploaded by a specific user. Access is restricted to the owner (`userId` must match `request.auth.uid`). The `userId` in the path ensures authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user who owns the wardrobe item."
+            },
+            {
+              "name": "wardrobeItemId",
+              "description": "The unique identifier for the wardrobe item."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_platformAdmins/{platformAdminId}",
+        "definition": {
+          "entityName": "PlatformAdminRole",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "A dedicated collection for Database Access Control (DBAC) to identify platform administrators. Existence of a document at `{platformAdminId}` (where `platformAdminId` is a user's UID) grants platform-wide administrative privileges. No specific schema beyond UID for existence check.",
+          "params": [
+            {
+              "name": "platformAdminId",
+              "description": "The unique identifier of a user who is a platform administrator."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The recommended Firestore structure for LookSync prioritizes Authorization Independence and Structural Segregation to ensure robust, debuggable security rules and efficient data access. User-specific data, such as `UserProfile`, `SavedLook`, and `WardrobeItem`, is stored in subcollections under `/users/{userId}`. This path-based ownership intrinsically links the data to the authenticated user (`request.auth.uid`), eliminating the need for complex `get()` calls in security rules for these private collections.\n\nFor globally accessible entities like `Brands`, `Products`, and `Looks`, top-level collections are used. To achieve Authorization Independence for `Product` and `Brand` write operations, denormalization is applied. Each `Product` document will include a `brandOwnerId` field, copied from the `ownerId` of its associated `Brand` document. This allows a brand admin to manage their products by checking `request.auth.uid == resource.data.brandOwnerId` directly, without performing a `get()` operation on the parent `Brand` document. Similarly, `Brand` documents themselves will include an `ownerId` for management by specific brand administrators. Platform-wide administration (e.g., creating/editing `Looks`, or managing `Brands` if there isn't a specific `ownerId`) is handled via a dedicated `/roles_platformAdmins/{platformAdminId}` collection, leveraging the 'Existence over Content' DBAC strategy.\n\nThis structure directly supports QAPs (Queries, Audits, Permissions) by ensuring that security rules are not used as filters but rather to validate access to homogeneous data sets. Collections like `/looks`, `/products`, and `/brands` are designed for public read access, allowing efficient `list` operations without security rule filtering concerns. For user-private collections like `/users/{userId}/savedLooks` or `/users/{userId}/wardrobeItems`, `list` operations are implicitly secured by the path itself, as `{userId}` must match `request.auth.uid` for any read/write access, ensuring that a user can only query their own data. This clear segregation of data by security posture simplifies rule writing and debugging considerably."
+  }
+}

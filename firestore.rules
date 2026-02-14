@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * LookSync Security Rules
+     * 
+     * Philosophy: This ruleset implements a robust, owner-centric security model designed for high scalability and 
+     * ease of debugging. It leverages path-based authorization for user-specific data and denormalized ownership 
+     * fields for shared or public data to avoid expensive and slow cross-document lookups (get() calls).
+     * 
+     * Data Structure:
+     * - /users/{userId}: Private user profiles and settings.
+     * - /users/{userId}/savedLooks: Personal galleries of saved outfit inspirations.
+     * - /users/{userId}/wardrobeItems: Private virtual wardrobe inventory.
+     * - /brands: Public directory of brands; management restricted to brand owners or admins.
+     * - /products: Public product catalog; management restricted to the associated brand owner or admins.
+     * - /looks: Public AI-generated or curated outfits; management restricted to platform admins.
+     * - /roles_platformAdmins: Administrative registry for privileged database access.
+     * 
+     * Key Security Decisions:
+     * - Path-Based Ownership: All data nested under /users/{userId} is strictly restricted to that user.
+     * - Denormalization for Authorization: Products contain 'brandOwnerId' to allow immediate permission checks 
+     *   without fetching the parent Brand document.
+     * - RBAC: A dedicated admin collection allows for flexible role management without hardcoding UIDs.
+     * - Prototyping Flexibility: While authorization is strictly enforced, data schemas are flexible to 
+     *   allow for rapid feature iteration.
+     */
+
+    // --- Global Helper Functions ---
+
+    /** Checks if the request is from an authenticated user. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Checks if the authenticated user's UID matches the provided userId. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** Checks if the document exists and the current user is the owner. Used for updates and deletes. */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    /** Checks if the authenticated user is registered in the platform admins collection. */
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_platformAdmins/$(request.auth.uid));
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for user profiles. Users can only manage their own profile.
+     * @path /users/{userId}
+     * @allow (create) if auth.uid matches userId.
+     * @deny (read) if trying to access another user's profile.
+     * @principle Enforces path-based ownership and relational integrity for root user documents.
+     */
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Publicly readable brands. Writes restricted to the designated brand owner or platform admins.
+     * @path /brands/{brandId}
+     * @allow (get) by any user.
+     * @deny (update) if user is not the brand owner or an admin.
+     * @principle Public read with owner-only writes using denormalized 'ownerId'.
+     */
+    match /brands/{brandId} {
+      allow get, list: if true;
+      allow create: if isAdmin() || (isSignedIn() && request.resource.data.ownerId == request.auth.uid);
+      allow update, delete: if resource != null && (isAdmin() || resource.data.ownerId == request.auth.uid);
+    }
+
+    /**
+     * @description Public product catalog. Writes restricted to the owner of the brand (via brandOwnerId) or admins.
+     * @path /products/{productId}
+     * @allow (list) by any user.
+     * @deny (create) if brandOwnerId does not match the requester's UID.
+     * @principle Uses denormalized authorization fields (brandOwnerId) to secure related data without lookups.
+     */
+    match /products/{productId} {
+      allow get, list: if true;
+      allow create: if isAdmin() || (isSignedIn() && request.resource.data.brandOwnerId == request.auth.uid);
+      allow update, delete: if resource != null && (isAdmin() || resource.data.brandOwnerId == request.auth.uid);
+    }
+
+    /**
+     * @description Curated looks are public for reading but can only be managed by platform administrators.
+     * @path /looks/{lookId}
+     * @allow (get) by any user.
+     * @deny (create) by standard registered users.
+     * @principle Restricts high-value global content to administrative control.
+     */
+    match /looks/{lookId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    /**
+     * @description Private collection of looks saved by a user.
+     * @path /users/{userId}/savedLooks/{savedLookId}
+     * @allow (list) if auth.uid matches userId in the path.
+     * @deny (get) if userId in path is not the requester.
+     * @principle Structural segregation of private user data.
+     */
+    match /users/{userId}/savedLooks/{savedLookId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Private virtual wardrobe items uploaded by the user.
+     * @path /users/{userId}/wardrobeItems/{wardrobeItemId}
+     * @allow (create) if auth.uid matches userId and data.userId matches userId.
+     * @deny (list) if requester is not the owner of the parent user document.
+     * @principle Enforces strict ownership and data consistency for personal assets.
+     */
+    match /users/{userId}/wardrobeItems/{wardrobeItemId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Administrative registry. Access is strictly denied via rules; managed via console or secure backend.
+     * @path /roles_platformAdmins/{platformAdminId}
+     * @allow (none)
+     * @principle Existence-based Role Based Access Control (RBAC).
+     */
+    match /roles_platformAdmins/{platformAdminId} {
+      allow read, write: if false;
+    }
+  }
+}
