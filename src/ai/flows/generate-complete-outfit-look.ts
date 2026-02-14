@@ -90,7 +90,7 @@ const generateOutfitPrompt = ai.definePrompt({
   output: { schema: GenerateCompleteOutfitLookOutputSchema },
   prompt: `You are an expert Indian fashion stylist and AI assistant named LookSync. Your goal is to generate a complete, coordinated outfit look for women based on the provided preferences. Ensure that all suggested items (outfit, footwear, jewellery, bag, makeup, and nails) are harmoniously color-coordinated and suitable for the specified occasion.
 
-Strictly adhere to the budget, skin tone, body type, and style preferences. For product suggestions, use realistic Indian brand names, product names, prices, and provide placeholder image URLs and buy links that are valid URLs. The image URLs should point to a placeholder image service (e.g., 'https://via.placeholder.com/200') and the buy links should point to a dummy e-commerce page (e.g., 'https://example.com/product/123').
+Strictly adhere to the budget, skin tone, body type, and style preferences. For product suggestions, use realistic Indian brand names, product names, prices, and provide placeholder image URLs and buy links that are valid URLs. The image URLs should point to a placeholder image service (e.g., 'https://placehold.co/400x600' or 'https://picsum.photos/seed/look/400/600') and the buy links should point to a dummy e-commerce page (e.g., 'https://example.com/product/123').
 
 The colorPreference is optional. If provided, incorporate it strongly into the look. If 'Surprise me' or not provided, choose a beautiful color palette suitable for the occasion and preferences.
 
@@ -108,7 +108,7 @@ Example of a detailed product item:
   "name": "Kanjivaram Silk Saree",
   "brand": "Nalli Silks",
   "price": 25000,
-  "imageUrl": "https://via.placeholder.com/200/FF0000/FFFFFF?text=RedSaree",
+  "imageUrl": "https://placehold.co/400x600/FF0000/FFFFFF?text=Red+Saree",
   "buyLink": "https://example.com/product/kanjivaram-saree"
 }
 `
