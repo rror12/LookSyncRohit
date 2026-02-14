@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Info, AlertCircle, ShoppingBag, Shirt, Heart, Trash2 } from 'lucide-react';
+import { Plus, Info, AlertCircle, ShoppingBag, Shirt, Heart, Trash2, Sparkles } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 export default function WardrobePage() {
