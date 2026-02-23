@@ -48,23 +48,23 @@ export default function Navbar() {
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
+                <Button variant="ghost" size="icon" className="rounded-full ring-offset-background focus-visible:ring-2 focus-visible:ring-rose-gold">
                   <User className="h-5 w-5 text-deep-plum" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 rounded-xl">
-                <DropdownMenuItem className="font-medium text-xs text-muted-foreground uppercase tracking-widest px-4 py-2">
-                  {user.isAnonymous ? 'Guest User' : user.email}
+              <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">
+                <DropdownMenuItem className="font-medium text-[10px] text-muted-foreground uppercase tracking-widest px-2 py-1 select-none">
+                  {user.isAnonymous ? 'Guest session' : user.email}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="my-1" />
                 <DropdownMenuItem asChild>
-                  <Link href="/wardrobe">My Wardrobe</Link>
+                  <Link href="/wardrobe" className="cursor-pointer">My Wardrobe</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/gallery">Saved Looks</Link>
+                  <Link href="/gallery" className="cursor-pointer">Saved Looks</Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive font-medium" onClick={handleSignOut}>
+                <DropdownMenuSeparator className="my-1" />
+                <DropdownMenuItem className="text-destructive font-medium cursor-pointer" onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" /> Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -81,7 +81,7 @@ export default function Navbar() {
                 <Menu className="h-6 w-6" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-48 rounded-xl">
               <DropdownMenuItem asChild>
                 <Link href="/builder">Look Builder</Link>
               </DropdownMenuItem>
